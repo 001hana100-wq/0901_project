@@ -3,7 +3,7 @@
 ## 3.1 파일 구조
 
 ```text
-frontend/
+./
 ├─ index.html             # 페이지 구조와 콘텐츠
 ├─ css/
 │  └─ style.css           # 공통 스타일과 반응형 스타일

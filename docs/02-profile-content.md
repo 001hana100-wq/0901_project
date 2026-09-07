@@ -10,7 +10,7 @@
 | 직무/역할 | `[프론트엔드 개발자]` |
 | 한 줄 소개 | `[사용하기 편리한 웹 서비스를 만드는 개발자입니다.]` |
 | 거주 지역(선택) | `[서울, 대한민국]` |
-| 프로필 이미지 | `frontend/assets/images/profile.webp` |
+| 프로필 이미지 | `assets/images/profile.webp` |
 | 이미지 대체 텍스트 | `[홍길동의 프로필 사진]` |
 
 프로필 사진을 사용하지 않는 경우 본인을 표현하는 일러스트나 대표 이미지를 사용할 수 있습니다. 사용 권한이 있는 이미지만 등록하고 웹에 적합한 크기로 최적화합니다.
@@ -65,7 +65,7 @@
 담당 역할: [직접 구현하거나 기여한 내용]
 사용 기술: [HTML], [CSS], [JavaScript]
 결과/배운 점: [성과 또는 개선한 점]
-대표 이미지: frontend/assets/images/[project-name].webp
+대표 이미지: assets/images/[project-name].webp
 GitHub: https://github.com/[사용자명]/[저장소명]
 데모 주소(선택): https://[배포 주소]
 ```
@@ -97,4 +97,3 @@ GitHub: https://github.com/[사용자명]/[저장소명]
 - [ ] 정확한 이메일 주소
 - [ ] GitHub 프로필 및 프로젝트 저장소 주소
 - [ ] 공개할 기타 연락처
-

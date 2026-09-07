@@ -29,7 +29,7 @@ HTML, CSS, JavaScript를 사용해 반응형 개인 프로필 페이지를 만�
 ## 예상 결과물
 
 ```text
-frontend/
+./
 ├─ index.html
 ├─ css/
 │  └─ style.css
