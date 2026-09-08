@@ -9,7 +9,7 @@
  * 공개 서비스는 Firebase Authentication 등 전문 인증 서비스 사용을 권장합니다.
  */
 
-const CONFIG = Object.freeze({
+const BLOG_AUTH_CONFIG = Object.freeze({
   spreadsheetId: '1nm3hx26G3UhYdyFjsJAnvf3YhqgejMr98xaJ694EJp8',
   usersSheet: 'Users',
   sessionsSheet: 'Sessions',
@@ -19,12 +19,12 @@ const CONFIG = Object.freeze({
   loginBlockSeconds: 600,
 });
 
-const USER_HEADERS = [
+const BLOG_AUTH_USER_HEADERS = [
   'id', 'email', 'name', 'passwordHash', 'salt',
   'status', 'createdAt', 'lastLoginAt',
 ];
 
-const SESSION_HEADERS = [
+const BLOG_AUTH_SESSION_HEADERS = [
   'tokenHash', 'userId', 'expiresAt', 'createdAt', 'revoked',
 ];
 
@@ -36,9 +36,9 @@ function setupAuth() {
 
 /** 초기 설정을 놓쳐도 첫 API 요청에서 자동으로 준비합니다. */
 function ensureAuthReady_() {
-  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
-  ensureSheet_(spreadsheet, CONFIG.usersSheet, USER_HEADERS);
-  ensureSheet_(spreadsheet, CONFIG.sessionsSheet, SESSION_HEADERS);
+  const spreadsheet = SpreadsheetApp.openById(BLOG_AUTH_CONFIG.spreadsheetId);
+  ensureSheet_(spreadsheet, BLOG_AUTH_CONFIG.usersSheet, BLOG_AUTH_USER_HEADERS);
+  ensureSheet_(spreadsheet, BLOG_AUTH_CONFIG.sessionsSheet, BLOG_AUTH_SESSION_HEADERS);
 
   const properties = PropertiesService.getScriptProperties();
   if (!properties.getProperty('AUTH_PEPPER')) {
@@ -100,7 +100,7 @@ function signup_(body) {
   lock.waitLock(10000);
 
   try {
-    const usersSheet = getSheet_(CONFIG.usersSheet);
+    const usersSheet = getSheet_(BLOG_AUTH_CONFIG.usersSheet);
     if (findUserByEmail_(usersSheet, email)) {
       return json_({ success: false, message: '이미 가입된 이메일입니다.' });
     }
@@ -146,14 +146,14 @@ function login_(body) {
   const attemptKey = 'login:' + shortHash_(email);
   const attempts = Number(cache.get(attemptKey) || 0);
 
-  if (attempts >= CONFIG.maxLoginAttempts) {
+  if (attempts >= BLOG_AUTH_CONFIG.maxLoginAttempts) {
     return json_({
       success: false,
       message: '로그인 시도가 너무 많습니다. 10분 뒤 다시 시도해주세요.',
     });
   }
 
-  const usersSheet = getSheet_(CONFIG.usersSheet);
+  const usersSheet = getSheet_(BLOG_AUTH_CONFIG.usersSheet);
   const user = findUserByEmail_(usersSheet, email);
   const valid = user &&
     user.status === 'active' &&
@@ -163,7 +163,7 @@ function login_(body) {
     cache.put(
       attemptKey,
       String(attempts + 1),
-      CONFIG.loginBlockSeconds
+      BLOG_AUTH_CONFIG.loginBlockSeconds
     );
     return invalidLogin_();
   }
@@ -187,7 +187,7 @@ function me_(body) {
     return json_({ success: false, message: '로그인이 필요합니다.' });
   }
 
-  const user = findUserById_(getSheet_(CONFIG.usersSheet), session.userId);
+  const user = findUserById_(getSheet_(BLOG_AUTH_CONFIG.usersSheet), session.userId);
   if (!user || user.status !== 'active') {
     return json_({ success: false, message: '사용자를 찾을 수 없습니다.' });
   }
@@ -203,7 +203,7 @@ function logout_(body) {
   if (!token) return json_({ success: true, message: '로그아웃되었습니다.' });
 
   const tokenHash = hashToken_(token);
-  const sheet = getSheet_(CONFIG.sessionsSheet);
+  const sheet = getSheet_(BLOG_AUTH_CONFIG.sessionsSheet);
   const rows = getDataRows_(sheet);
 
   for (let index = 0; index < rows.length; index += 1) {
@@ -220,10 +220,10 @@ function createSession_(userId) {
   const token = randomToken_();
   const now = new Date();
   const expiresAt = new Date(
-    now.getTime() + CONFIG.sessionHours * 60 * 60 * 1000
+    now.getTime() + BLOG_AUTH_CONFIG.sessionHours * 60 * 60 * 1000
   );
 
-  getSheet_(CONFIG.sessionsSheet).appendRow([
+  getSheet_(BLOG_AUTH_CONFIG.sessionsSheet).appendRow([
     hashToken_(token),
     userId,
     expiresAt,
@@ -239,7 +239,7 @@ function findValidSession_(rawToken) {
   if (!token) return null;
 
   const tokenHash = hashToken_(token);
-  const rows = getDataRows_(getSheet_(CONFIG.sessionsSheet));
+  const rows = getDataRows_(getSheet_(BLOG_AUTH_CONFIG.sessionsSheet));
   const now = Date.now();
 
   for (let index = rows.length - 1; index >= 0; index -= 1) {
@@ -289,7 +289,7 @@ function hashPassword_(password, salt) {
   const pepper = getPepper_();
   let value = String(password) + ':' + String(salt) + ':' + pepper;
 
-  for (let round = 0; round < CONFIG.hashRounds; round += 1) {
+  for (let round = 0; round < BLOG_AUTH_CONFIG.hashRounds; round += 1) {
     const bytes = Utilities.computeDigest(
       Utilities.DigestAlgorithm.SHA_256,
       value,
@@ -365,7 +365,7 @@ function parseBody_(e) {
 
 function getSheet_(name) {
   const sheet = SpreadsheetApp
-    .openById(CONFIG.spreadsheetId)
+    .openById(BLOG_AUTH_CONFIG.spreadsheetId)
     .getSheetByName(name);
   if (!sheet) throw new Error(name + ' 시트를 찾을 수 없습니다.');
   return sheet;

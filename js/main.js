@@ -1,4 +1,4 @@
-const AUTH_API_URL = 'https://script.google.com/macros/s/AKfycbzSTzHv2Hb5OBR6nx7pTYArPVg14jeUdAHqE246afggBZ9QHwpD5RP52YjcyLdoGf4/exec';
+const AUTH_API_URL = 'https://script.google.com/macros/s/AKfycbxCXa9jPGRL1-aEoRP3PZUVvvpNriaINqONC41X0ZZndx0KO0rqzca9JnEB22ZvcOmy/exec';
 
 const root = document.documentElement;
 const themeButton = document.querySelector('.theme-toggle');
